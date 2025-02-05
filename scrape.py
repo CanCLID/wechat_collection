@@ -1,11 +1,17 @@
-import requests
 from bs4 import BeautifulSoup
-from urllib.parse import unquote
-import os
 import re
+import time
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import TimeoutException, ElementClickInterceptedException, NoSuchElementException
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
-def extract_content(url):
+def extract_content(url: str):
     """
     Extracts content from a WeChat article URL and returns it as Markdown.
 
@@ -17,14 +23,85 @@ def extract_content(url):
       an error occurs.
     """
 
-    try:
-        response = requests.get(url)
-        response.raise_for_status()  # Raise an exception for bad status codes
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching URL: {e}")
-        return None
+    print("Starting new Chrome instance...")
+    options = Options()
+    options.add_argument('--no-sandbox')
+    options.add_argument('--window-size=1920,1080')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--disable-blink-features=AutomationControlled')
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option('useAutomationExtension', False)
 
-    soup = BeautifulSoup(response.content, 'html.parser')
+    try:
+        service = Service()
+        driver = webdriver.Chrome(service=service, options=options)
+        print(f"Attempting to fetch URL with Chrome...")
+        driver.get(url)
+
+        # First check for verification button and click it if present
+        print("Checking for verification button...")
+        try:
+            verify_button = WebDriverWait(driver, 5).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "a#js_verify, a.weui-btn.weui-btn_primary"))
+            )
+            print("Verification button found, attempting to click...")
+
+            # Try multiple click methods
+            try:
+                verify_button.click()
+            except ElementClickInterceptedException:
+                ActionChains(driver).move_to_element(verify_button).click().perform()
+            except Exception as e:
+                print(f"Failed to click button: {e}")
+                driver.execute_script("arguments[0].click();", verify_button)
+
+            print("Clicked verification button, waiting for content...")
+            time.sleep(1)  # Wait for verification process
+        except TimeoutException:
+            print("No verification button found, proceeding...")
+        except Exception as e:
+            print(f"Error handling verification: {e}")
+
+        # Wait for the content to load with multiple checks
+        print("Waiting for content to load...")
+        max_retries = 3
+        retry_count = 0
+
+        # Simple check for content presence
+        time.sleep(2)  # Brief wait for initial load
+        page_source = driver.page_source
+        if "js_content" in page_source:
+            print("Content found in page...")
+        else:
+            print("No content found in page, will retry...")
+            retry_count = 0
+            while retry_count < max_retries:
+                try:
+                    # Wait for content to be present and visible
+                    content_present = WebDriverWait(driver, 5).until(
+                        EC.visibility_of_element_located((By.ID, "js_content"))
+                    )
+                    break
+                except TimeoutException:
+                    retry_count += 1
+                    print(f"Retry {retry_count}/{max_retries} for content loading...")
+                    if retry_count == max_retries:
+                        print("Max retries reached, failing...")
+                        return None, None
+                    time.sleep(1)
+
+        # Get the page source after JavaScript has run
+        page_source = driver.page_source
+        soup = BeautifulSoup(page_source, 'html.parser')
+
+    except Exception as e:
+        print(f"Error with Chrome browser: {e}")
+        return None, None
+    finally:
+        try:
+            driver.quit()
+        except:
+            pass
 
     # Extract title
     title_tag = soup.find('h1', {'id': 'activity-name'})
@@ -41,12 +118,13 @@ def extract_content(url):
     time_tag = soup.find('span', {'id': 'meta_content_hide_info'})
     publish_time_tag = time_tag.find('em', {'id': 'publish_time'}) if time_tag else None
     publish_time = publish_time_tag.text.strip() if publish_time_tag else "No Publish Time Found"
-    print(publish_time_tag)
 
     # Extract main content
     content_div = soup.find('div', {'id': 'js_content'})
     if not content_div:
-        return "No Content Found"
+        print("No content div found in the page")
+        print("Page content:", soup.prettify()[:500])  # Print first 500 chars of page
+        return None, None
 
     markdown_content = ""
 
@@ -154,12 +232,18 @@ def handle_section(section_element, all_images, img_index):
 
 if __name__ == "__main__":
     # Example usage:
-    wechat_url = "https://mp.weixin.qq.com/s?__biz=MzA5MDkxNTA4Ng%3D%3D&mid=2454908782&idx=1&sn=389bb4d0cf40715ec4a32cf855a30bc6&scene=45#wechat_redirect"
-    markdown_output, filename = extract_content(wechat_url)
-
-    if markdown_output:
-        with open(filename, "w", encoding="utf-8") as f:
-            f.write(markdown_output)
-        print(f"Markdown content saved to {filename}")
-    else:
-        print("Failed to extract content.")
+    links = open("links.txt", "r").readlines()
+    wechat_url = "https://mp.weixin.qq.com/s?__biz=MzA5MDkxNTA4Ng==&amp;mid=2454912394&amp;idx=1&amp;sn=4250f2786cf472c0494078265913d5ec&amp;chksm=87a235ebb0d5bcfd3553c84fb9f045b475709dfcce025040b34f89b129dd9bb46808d6956c96&poc_token=HJ_Do2ejHyO-wNZGG8Q1S8FdPgy1YBBEob-nUEme"
+    for link in links:
+        wechat_url = link.strip()
+        try:
+            print(f"Extracting content from {wechat_url}...")
+            markdown_output, filename = extract_content(wechat_url)
+            if markdown_output:
+                with open(filename, "w", encoding="utf-8") as f:
+                    f.write(markdown_output)
+                print(f"Markdown content saved to {filename}")
+            else:
+                print("Failed to extract content - no content returned")
+        except TypeError as e:
+            print(f"Failed to extract content - error: {e}")
