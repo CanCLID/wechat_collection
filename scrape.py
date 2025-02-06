@@ -1,14 +1,20 @@
-from bs4 import BeautifulSoup
 import re
 import time
+import concurrent.futures
+from typing import Tuple, Optional
+
+from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
+from selenium.common.exceptions import (
+    ElementClickInterceptedException,
+    TimeoutException,
+)
 from selenium.webdriver.chrome.options import Options
-from selenium.common.exceptions import TimeoutException, ElementClickInterceptedException, NoSuchElementException
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 def extract_content(url: str):
@@ -68,7 +74,7 @@ def extract_content(url: str):
         retry_count = 0
 
         # Simple check for content presence
-        time.sleep(2)  # Brief wait for initial load
+        time.sleep(3)  # Brief wait for initial load
         page_source = driver.page_source
         if "js_content" in page_source:
             print("Content found in page...")
@@ -230,20 +236,44 @@ def handle_section(section_element, all_images, img_index):
     return section_text, img_index
 
 
+def process_url(url: str) -> Tuple[Optional[str], Optional[str]]:
+    """Process a single URL and return the markdown content and filename."""
+    try:
+        print(f"Extracting content from {url}...")
+        markdown_output, filename = extract_content(url)
+        if markdown_output:
+            with open(filename, "w", encoding="utf-8") as f:
+                f.write(markdown_output)
+            print(f"Markdown content saved to {filename}")
+            return markdown_output, filename
+        else:
+            print("Failed to extract content - no content returned")
+            return None, None
+    except TypeError as e:
+        print(f"Failed to extract content - error: {e}")
+        return None, None
+
+
 if __name__ == "__main__":
-    # Example usage:
-    links = open("links.txt", "r").readlines()
-    wechat_url = "https://mp.weixin.qq.com/s?__biz=MzA5MDkxNTA4Ng==&amp;mid=2454912394&amp;idx=1&amp;sn=4250f2786cf472c0494078265913d5ec&amp;chksm=87a235ebb0d5bcfd3553c84fb9f045b475709dfcce025040b34f89b129dd9bb46808d6956c96&poc_token=HJ_Do2ejHyO-wNZGG8Q1S8FdPgy1YBBEob-nUEme"
-    for link in links:
-        wechat_url = link.strip()
-        try:
-            print(f"Extracting content from {wechat_url}...")
-            markdown_output, filename = extract_content(wechat_url)
-            if markdown_output:
-                with open(filename, "w", encoding="utf-8") as f:
-                    f.write(markdown_output)
-                print(f"Markdown content saved to {filename}")
-            else:
-                print("Failed to extract content - no content returned")
-        except TypeError as e:
-            print(f"Failed to extract content - error: {e}")
+    # Read all links
+    links = [link.strip() for link in open("links.txt", "r").readlines()]
+
+    # Number of concurrent Chrome instances
+    max_workers = 24  # Adjust this number based on your system's capabilities
+
+    # Process URLs concurrently
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        # Submit all URLs for processing
+        future_to_url = {executor.submit(process_url, url): url for url in links}
+
+        # Process completed tasks as they finish
+        for future in concurrent.futures.as_completed(future_to_url):
+            url = future_to_url[future]
+            try:
+                markdown_output, filename = future.result()
+                if markdown_output and filename:
+                    print(f"Successfully processed: {url}")
+                else:
+                    print(f"Failed to process: {url}")
+            except Exception as e:
+                print(f"Error processing {url}: {e}")
