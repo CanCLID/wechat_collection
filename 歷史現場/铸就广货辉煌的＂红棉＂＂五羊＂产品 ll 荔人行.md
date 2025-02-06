@@ -52,9 +52,13 @@ source: http://mp.weixin.qq.com/s?__biz=MzA5MDkxNTA4Ng==&amp;mid=2454911731&amp;
 
 ![](https://mmbiz.qpic.cn/mmbiz_png/PJWG74pLsMaUVGNMzrrmaicNENBDWuViaAyeTv8ItmmGPicUHnTh7gIWGIh4EevxfhsJciaQaEZyicpgPX8drrwtXwQ/640)
 
-电池：有各时期广州兴华电池出品的＂五羊牌＂系列电池，广州电池厂生产和中国杂品出口公司广州分公司经营出口的＂五羊牌＂系列电池。            锁具：有广州岭南厂生产的＂红棉牌＂挂锁，广州昌隆厂生产的＂五羊牌＂系列密码锁。我儿时记忆最深刻的是如下图所示的昌隆厂生产的蓝色密码锁(当时俗称＂狗牙锁＂)，得闲时我就用手指拨转锁上密码齿轮，玩个不亦乐乎。 ![](https://mmbiz.qpic.cn/mmbiz_png/PJWG74pLsMaUVGNMzrrmaicNENBDWuViaAYibenPTEASlMINtMWwobIKCCBSvoBAsibPfBgjXibW7ERM6HSsQO0lIAw/640)
+电池：有各时期广州兴华电池出品的＂五羊牌＂系列电池，广州电池厂生产和中国杂品出口公司广州分公司经营出口的＂五羊牌＂系列电池。
 
-其他日用品：有广州源昌肥皂厂生产的＂红棉牌＂香皂，广州日用化工厂生产的＂红棉牌＂牙膏/雪花膏，广州制线二厂生产的＂红棉牌＂系列缝纫线，广州巧明火柴厂生产的＂五羊牌＂火柴，广州前进五金社生产的＂五羊牌＂发夹，广州五羊化妆品有限公司出品的＂五羊牌＂系列护肤品，广州亿安劳保有限公司出品的＂五羊牌＂系列㬵手套，等等。       文体用品        收音机：有国营广州无线电装修厂(后改名为＂广州无线电厂＂)出品的＂红棉牌＂系列收音机，广东省国营红棉电子厂出品的＂红棉牌＂系列收录机。![](https://mmbiz.qpic.cn/mmbiz_png/PJWG74pLsMaUVGNMzrrmaicNENBDWuViaAusyDiawyicWHb61N2A8ibvOC6ibaYV53qOUibP0nhib87LrTFZXLbwiatbTqQ/640)
+锁具：有广州岭南厂生产的＂红棉牌＂挂锁，广州昌隆厂生产的＂五羊牌＂系列密码锁。我儿时记忆最深刻的是如下图所示的昌隆厂生产的蓝色密码锁(当时俗称＂狗牙锁＂)，得闲时我就用手指拨转锁上密码齿轮，玩个不亦乐乎。 ![](https://mmbiz.qpic.cn/mmbiz_png/PJWG74pLsMaUVGNMzrrmaicNENBDWuViaAYibenPTEASlMINtMWwobIKCCBSvoBAsibPfBgjXibW7ERM6HSsQO0lIAw/640)
+
+其他日用品：有广州源昌肥皂厂生产的＂红棉牌＂香皂，广州日用化工厂生产的＂红棉牌＂牙膏/雪花膏，广州制线二厂生产的＂红棉牌＂系列缝纫线，广州巧明火柴厂生产的＂五羊牌＂火柴，广州前进五金社生产的＂五羊牌＂发夹，广州五羊化妆品有限公司出品的＂五羊牌＂系列护肤品，广州亿安劳保有限公司出品的＂五羊牌＂系列㬵手套，等等。
+
+文体用品        收音机：有国营广州无线电装修厂(后改名为＂广州无线电厂＂)出品的＂红棉牌＂系列收音机，广东省国营红棉电子厂出品的＂红棉牌＂系列收录机。![](https://mmbiz.qpic.cn/mmbiz_png/PJWG74pLsMaUVGNMzrrmaicNENBDWuViaAusyDiawyicWHb61N2A8ibvOC6ibaYV53qOUibP0nhib87LrTFZXLbwiatbTqQ/640)
 
 ![](https://mmbiz.qpic.cn/mmbiz_png/PJWG74pLsMaUVGNMzrrmaicNENBDWuViaAia1TicFlgNe60quMKZdcUWvBxIjvaDzibnbBXBHGuvEVSdsibc6Zp4QgGA/640)
 
